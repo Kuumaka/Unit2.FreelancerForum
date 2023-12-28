@@ -13,6 +13,23 @@ const initialFreelancers = [
 
 console.log(initialFreelancers);
 
+const listOfFreelancers = document.getElementById('listOfFreelancers');
+
+function renderFreelancers() {
+    const listOfFreelancers = document.getElementById('listOfFreelancers');
+    listOfFreelancers.innerHTML = '';
+
+    initialFreelancers.forEach(freelancer => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+            <p>Name: ${freelancer.name}</p>
+            <p>Occupation: ${freelancer.occupation}</p>
+            <p>Starting Price: $${freelancer.startingPrice}</p>
+        `;
+        listOfFreelancers.appendChild(listItem);
+    });
+}
+
 function addFreelancer(name, occupation, startingPrice) {
     const newFreelancer = {
         name: name,
@@ -20,39 +37,34 @@ function addFreelancer(name, occupation, startingPrice) {
         startingPrice: startingPrice
     }
     initialFreelancers.push(newFreelancer);
-    
+    renderFreelancers();
 }
+
 addFreelancer('Carol', 'Programmer', 70);
 console.log(initialFreelancers);
 
-setInterval(() => {
-    addFreelancer("Cody", "Fitness Coach, 60");
-}, 4000);
+const possibleNames = ["Larry", "Jordan", "Ben", "Tiffany"];
+const possibleOccupations = ["Painter", "Poet", "Fitness Coach", "Repairman"];
 
-console.log(initialFreelancers);
+function generateRandomFreelancer() {
+    const randomNameIndex = Math.floor(Math.random() * possibleNames.length);
+    const randomOccupationIndex = Math.floor(Math.random() * possibleOccupations.length);
+    const randomName = possibleNames[randomNameIndex];
+    const randomOccupation = possibleOccupations[randomOccupationIndex];
+    const randomStartingPrice = Math.floor(Math.random() * 100) + 30;
 
-const listOfFreelancers = document.getElementById('listOfFreelancers');
-
-function renderFreelancers() {
-    initialFreelancers.forEach(freelancer => {
-        const freelancerDiv = document.createElement('div');
-        const name = document.createElement('p');
-        const occupation = document.createElement('p');
-        const price = document.createElement('p');
-    
-        name.textContent = `Name: ${freelancer.name}`;
-        occupation.textContent = `Occupation: ${freelancer.occupation}`;
-        price.textContent = `Starting Price: $${freelancer.startingPrice}`;
-    
-        freelancerDiv.appendChild(name);
-        freelancerDiv.appendChild(occupation);
-        freelancerDiv.appendChild(price);
-    
-        listOfFreelancers.appendChild(freelancerDiv);
-    });
+    return {
+        name: randomName,
+        occupation: randomOccupation,
+        startingPrice: randomStartingPrice,
+    };
 }
 
-renderFreelancers();
+setInterval(() => {
+    const newRandomFreelancer = generateRandomFreelancer();
+    addFreelancer(newRandomFreelancer.name, newRandomFreelancer.occupation, newRandomFreelancer.startingPrice);
+    updateAveragePrice();
+}, 4000);
 
 function calculateAvgStartingPrice(dataArr) {
     let totalStartingPrice = 0;
@@ -62,12 +74,14 @@ function calculateAvgStartingPrice(dataArr) {
     return totalStartingPrice / dataArr.length;
 }
 
-const avgPrice = calculateAvgStartingPrice(initialFreelancers);
-console.log(avgPrice);
+function updateAveragePrice() {
+    const avgPriceDiv = document.getElementById('avgPrice');
+    const avgPrice = calculateAvgStartingPrice(initialFreelancers);
+    const avgStartingPrice = document.createElement('p');
+    avgStartingPrice.textContent = `Average Starting Price $${avgPrice}`;
+    avgPriceDiv.innerHTML = '';
+    avgPriceDiv.appendChild(avgStartingPrice);
+}
 
-const avgPriceDiv = document.getElementById('avgPrice');
-const avgStartingPrice = document.createElement('p');
-avgStartingPrice.textContent = `Average Starting Price $${avgPrice}`;
-
-avgPriceDiv.appendChild(avgStartingPrice);
-
+renderFreelancers();
+updateAveragePrice();
